@@ -1,0 +1,19 @@
+group 'cloverleaf-cstools'
+subprojects {
+    apply plugin: 'java'
+    apply plugin: 'groovy'
+
+    version '1.0'
+    sourceCompatibility = 1.10
+
+    repositories {
+        mavenCentral()
+    }
+
+    dependencies {
+        compile 'org.slf4j:slf4j-api:1.7.25'
+        compile 'org.slf4j:slf4j-simple:1.7.25'
+        testCompile 'org.codehaus.groovy:groovy-all:2.4.15'
+        testCompile 'org.spockframework:spock-core:1.1-groovy-2.4'
+    }
+}
