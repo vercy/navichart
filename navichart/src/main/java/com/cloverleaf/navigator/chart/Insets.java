@@ -1,6 +1,7 @@
 package com.cloverleaf.navigator.chart;
 
 
+import java.awt.geom.Rectangle2D;
 import java.util.Objects;
 
 public class Insets {
@@ -60,6 +61,15 @@ public class Insets {
 
     void setRight(int right) {
         this.right = right;
+    }
+
+    public Rectangle2D getAreaLeft(Size s)
+    {
+        int x = left;
+        int y = top;
+        int w = (s.getWidth()-right)-left;
+        int h = (s.getHeight()-bottom)-top;
+        return new Rectangle2D.Float(x,y,w,h);
     }
 
     @Override
