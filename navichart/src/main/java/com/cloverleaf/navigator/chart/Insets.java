@@ -9,6 +9,7 @@ public class Insets {
     private int top;
     private int bottom;
     private int right;
+    private Size relativeTo;
 
     /** Create an empty Insets class */
     public Insets() {
@@ -21,6 +22,7 @@ public class Insets {
         this.top = i.top;
         this.bottom = i.bottom;
         this.right = i.right;
+        this.relativeTo = i.relativeTo;
     }
 
     /** New insets form components */
@@ -29,6 +31,7 @@ public class Insets {
         this.top = top;
         this.bottom = bottom;
         this.right = right;
+        this.relativeTo = null;
     }
 
     int getLeft() {
@@ -63,6 +66,14 @@ public class Insets {
         this.right = right;
     }
 
+    public Size getRelativeTo() {
+        return relativeTo;
+    }
+
+    public void setRelativeTo(Size relativeTo) {
+        this.relativeTo = relativeTo;
+    }
+
     public Rectangle2D getAreaLeft(Size s)
     {
         int x = left;
@@ -70,6 +81,15 @@ public class Insets {
         int w = (s.getWidth()-right)-left;
         int h = (s.getHeight()-bottom)-top;
         return new Rectangle2D.Float(x,y,w,h);
+    }
+
+    public Size getAreaLeft() {
+        if(relativeTo.getWidth() <= right + left || relativeTo.getHeight() <= bottom + top)
+            return new Size(0,0);
+
+        int w = (relativeTo.getWidth() - right) - left;
+        int h = (relativeTo.getHeight() - bottom) - top;
+        return new Size(w,h);
     }
 
     @Override
