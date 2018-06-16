@@ -14,5 +14,5 @@ public interface Ruler {
     List<?> getMajorTicks();
 
     /** Returns the underlying grid */
-    <T> Grid<T> getGrid();
+    Grid<?> getGrid();
 }
