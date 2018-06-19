@@ -1,4 +1,5 @@
-group 'cloverleaf-cstools'
+group 'cloverleaf'
+
 subprojects {
     apply plugin: 'java'
     apply plugin: 'groovy'

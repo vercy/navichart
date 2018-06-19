@@ -3,8 +3,8 @@ package com.cloverleaf.navigator.chart;
 import java.util.Objects;
 
 public class Size {
-    final int width;
-    final int height;
+    private final int width;
+    private final int height;
 
     public Size(int width, int height) {
         this.width = width;

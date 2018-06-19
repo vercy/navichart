@@ -3,7 +3,10 @@ package com.cloverleaf.navigator.navichartviewer;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.geom.AffineTransform;
+import java.awt.geom.Line2D;
 import java.awt.geom.Rectangle2D;
+
+import com.cloverleaf.navigator.chart.DataPoint;
 
 /** Swing component  */
 public class JNaviChart extends JPanel {
@@ -15,6 +18,10 @@ public class JNaviChart extends JPanel {
 
     void setFileName(String fileName) {
         this.fileName = fileName;
+    }
+
+    void addSeries(DataPoint[] series) {
+
     }
 
     @Override
@@ -33,5 +40,6 @@ public class JNaviChart extends JPanel {
                 g2.fill(new Rectangle2D.Double(i * defaultTransform.getScaleX(), j * defaultTransform.getScaleY(), 1 * defaultTransform.getScaleX(), 1 * defaultTransform.getScaleY()));
             }
 
+            g2.draw(new Line2D.Double(0 * defaultTransform.getScaleX(),12*defaultTransform.getScaleY(),100*defaultTransform.getScaleX(), 20 * defaultTransform.getScaleY()));
     }
 }
