@@ -24,7 +24,7 @@ public class DataPoint {
         return value;
     }
 
-    public boolean hasValue() {
+    public boolean isEmpty() {
         return Float.isNaN(value);
     }
 
