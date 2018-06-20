@@ -38,20 +38,39 @@ public class JNaviChart extends JPanel {
         AffineTransform defaultTransform = cfg.getDefaultTransform();
 
         g2.drawString(str, 10, 100);
-        g2.drawString("default scale: " + defaultTransform.getScaleX() + ", " + defaultTransform.getScaleY(), 10, 110);
+        double scaleX = defaultTransform.getScaleX();
+        double scaleY = defaultTransform.getScaleY();
+
+        g2.drawString("default scale: " + scaleX + ", " + scaleY, 10, 110);
         for (int i = 1; i < 11; i++) {
             for (int j = 1; j < 11; j++) {
                 g2.setColor(i % 2 == 0 && j % 2 == 0 ? Color.BLUE : Color.RED);
-                g2.fill(new Rectangle2D.Double(i * defaultTransform.getScaleX(), j * defaultTransform.getScaleY(), 1 * defaultTransform.getScaleX(), 1 * defaultTransform.getScaleY()));
+                g2.fill(new Rectangle2D.Double(i * scaleX, j * scaleY, 1 * scaleX, 1 * scaleY));
             }
         }
 
-        g2.draw(new Line2D.Double(0 * defaultTransform.getScaleX(),12*defaultTransform.getScaleY(),100*defaultTransform.getScaleX(), 20 * defaultTransform.getScaleY()));
+        g2.draw(new Line2D.Double(0 * scaleX,12* scaleY,100* scaleX, 20 * scaleY));
 
         DataPointBounds bounds = findMinMax(series);
         Dimension size = getSize();
+        int dataPointCount = series.length;
         g2.drawString("size: " + size.width + ", " + size.height, 10, 120);
         g2.drawString("bounds: " + bounds.min + ", " + bounds.max, 10, 130);
+        g2.drawString("points: " + dataPointCount, 10, 140);
+
+        // taking scale into account with the stroke width
+        double strokeWidth = 1 / scaleX;
+        double strokeHeight = 1 / scaleY;
+        g2.setStroke(new BasicStroke((float)strokeWidth));
+
+        double strokeHalfWidth = strokeWidth / 2;
+        double strokeHalfHeight = strokeHeight / 2;
+        g2.setColor(Color.magenta);
+        g2.draw(new Rectangle2D.Double(strokeHalfWidth, strokeHalfHeight, size.width-1 - strokeHalfWidth, size.height-1 - strokeHalfHeight));
+
+        g2.setColor(Color.green);
+        g2.draw(new Rectangle2D.Double(strokeHalfWidth * 3, strokeHalfHeight * 3, size.width - 1 - strokeHalfWidth * 4, size.height - 1 -strokeHalfHeight * 4));
+
     }
 
     static final class DataPointBounds {
