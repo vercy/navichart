@@ -33,23 +33,22 @@ public class JNaviChart extends JPanel {
     protected void paintComponent(Graphics g) {
         Graphics2D g2 = (Graphics2D) g;
         g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-        String str = fileName == null || fileName.equalsIgnoreCase("") ? "No input file" : fileName;
         GraphicsConfiguration cfg = g2.getDeviceConfiguration();
         AffineTransform defaultTransform = cfg.getDefaultTransform();
 
-        g2.drawString(str, 10, 100);
         double scaleX = defaultTransform.getScaleX();
         double scaleY = defaultTransform.getScaleY();
+        // 1 pixel wide stroke, assuming square pixels
+        double strokeWidth = 1 / scaleX;
+        double strokeHeight = 1 / scaleY;
+        g2.setStroke(new BasicStroke((float)strokeWidth));
 
+        double strokeHalfWidth = strokeWidth / 2;
+        double strokeHalfHeight = strokeHeight / 2;
+
+        String str = fileName == null || fileName.equalsIgnoreCase("") ? "No input file" : fileName;
+        g2.drawString(str, 10, 100);
         g2.drawString("default scale: " + scaleX + ", " + scaleY, 10, 110);
-        for (int i = 1; i < 11; i++) {
-            for (int j = 1; j < 11; j++) {
-                g2.setColor(i % 2 == 0 && j % 2 == 0 ? Color.BLUE : Color.RED);
-                g2.fill(new Rectangle2D.Double(i * scaleX, j * scaleY, 1 * scaleX, 1 * scaleY));
-            }
-        }
-
-        g2.draw(new Line2D.Double(0 * scaleX,12* scaleY,100* scaleX, 20 * scaleY));
 
         DataPointBounds bounds = findMinMax(series);
         Dimension size = getSize();
@@ -58,18 +57,39 @@ public class JNaviChart extends JPanel {
         g2.drawString("bounds: " + bounds.min + ", " + bounds.max, 10, 130);
         g2.drawString("points: " + dataPointCount, 10, 140);
 
-        // taking scale into account with the stroke width
-        double strokeWidth = 1 / scaleX;
-        double strokeHeight = 1 / scaleY;
-        g2.setStroke(new BasicStroke((float)strokeWidth));
+        for (int i = 2; i < 12; i++) {
+            for (int j = 2; j < 12; j++) {
+                g2.setColor(i % 2 == 0 && j % 2 == 0 ? Color.BLUE : Color.RED);
+                g2.draw(new Rectangle.Double(i * strokeWidth + strokeHalfWidth, j * strokeWidth + strokeHalfHeight, strokeHalfWidth, strokeHalfHeight));
+            }
+        }
 
-        double strokeHalfWidth = strokeWidth / 2;
-        double strokeHalfHeight = strokeHeight / 2;
+        g2.draw(new Line2D.Double(strokeHalfWidth,12 * strokeHeight + strokeHalfWidth,100 * strokeHalfWidth + strokeHalfWidth, 20 * strokeHeight + strokeHalfHeight));
+
+
         g2.setColor(Color.magenta);
         g2.draw(new Rectangle2D.Double(strokeHalfWidth, strokeHalfHeight, size.width-1 - strokeHalfWidth, size.height-1 - strokeHalfHeight));
 
         g2.setColor(Color.green);
         g2.draw(new Rectangle2D.Double(strokeHalfWidth * 3, strokeHalfHeight * 3, size.width - 1 - strokeHalfWidth * 4, size.height - 1 -strokeHalfHeight * 4));
+
+        g2.setStroke(new BasicStroke((float)strokeWidth / 2));
+        g2.setColor(Color.blue);
+        double dataHeight = (bounds.max - bounds.min) * 1.2;
+        double vStep = (double)size.width / (dataPointCount - 1);
+        for(int i = 1; i < dataPointCount; i++) {
+            // transform
+
+            double x = vStep * (i-1);
+            double y = (1 - ((series[i-1].getValue() - bounds.min + dataHeight / 12) / dataHeight)) * size.height;
+
+            g2.draw(new Line2D.Double(
+                    x,
+                    y,
+                    vStep * (i),
+                    (1-((series[i].getValue() - bounds.min + dataHeight / 12) / dataHeight)) * size.height));
+            g2.drawString(series[i-1].toString(), (float)x, (float)y);
+        }
 
     }
 
