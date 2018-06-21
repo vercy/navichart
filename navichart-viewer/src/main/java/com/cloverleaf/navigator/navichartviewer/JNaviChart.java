@@ -5,8 +5,11 @@ import java.awt.*;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Line2D;
 import java.awt.geom.Rectangle2D;
+import java.util.ArrayList;
+import java.util.List;
 
 import com.cloverleaf.navigator.chart.DataPoint;
+import com.cloverleaf.navigator.chart.VectorImage;
 
 /** Swing component  */
 public class JNaviChart extends JPanel {
@@ -75,22 +78,45 @@ public class JNaviChart extends JPanel {
 
         g2.setStroke(new BasicStroke((float)strokeWidth / 2));
         g2.setColor(Color.blue);
-        double dataHeight = (bounds.max - bounds.min) * 1.2;
-        double vStep = (double)size.width / (dataPointCount - 1);
-        for(int i = 1; i < dataPointCount; i++) {
+
+        VectorImage img = toImage(series);
+        for(VectorImage.Shape s : img.getShapes()) {
+            if(s instanceof VectorImage.Line) {
+                VectorImage.Line line = (VectorImage.Line)s;
+                g2.draw(new Line2D.Float(
+                        line.getX1() * size.width,
+                        line.getY1() * size.height,
+                        line.getX2() * size.width,
+                        line.getY2() * size.height));
+            } else if(s instanceof VectorImage.Text) {
+                VectorImage.Text text = (VectorImage.Text)s;
+                g2.drawString(
+                        text.getText(),
+                        text.getX() * size.width,
+                        text.getY() * size.height);
+            }
+        }
+    }
+
+    private VectorImage toImage(DataPoint[] data) {
+        DataPointBounds bounds = findMinMax(data);
+        float dataHeight = (bounds.max - bounds.min) * 1.2f;
+        float vStep = 1.0f / (data.length - 1);
+
+        List<VectorImage.Shape> img = new ArrayList<>();
+        for(int i = 1; i < data.length; i++) {
             // transform
 
-            double x = vStep * (i-1);
-            double y = (1 - ((series[i-1].getValue() - bounds.min + dataHeight / 12) / dataHeight)) * size.height;
+            float x1 = vStep * (i-1);
+            float y1 = ((series[i-1].getValue() - bounds.min + dataHeight / 12) / dataHeight);
+            float x2 = vStep * i;
+            float y2 = ((series[i].getValue() - bounds.min + dataHeight / 12) / dataHeight);
 
-            g2.draw(new Line2D.Double(
-                    x,
-                    y,
-                    vStep * (i),
-                    (1-((series[i].getValue() - bounds.min + dataHeight / 12) / dataHeight)) * size.height));
-            g2.drawString(series[i-1].toString(), (float)x, (float)y);
+            img.add(new VectorImage.Line(x1, y1, x2, y2));
+            img.add(new VectorImage.Text(x1, y1, data[i-1].toString()));
         }
 
+        return new VectorImage(img.toArray(new VectorImage.Shape[0]));
     }
 
     static final class DataPointBounds {
