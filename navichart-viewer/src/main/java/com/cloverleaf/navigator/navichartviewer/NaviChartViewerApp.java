@@ -11,7 +11,6 @@ public class NaviChartViewerApp {
 
         ViewerFrame mainWindow = new ViewerFrame();
         mainWindow.initUI();
-        mainWindow.getChart().setFileName(cmdLine.getOpenOnStartFileName());
         mainWindow.setVisible(true);
     }
 
