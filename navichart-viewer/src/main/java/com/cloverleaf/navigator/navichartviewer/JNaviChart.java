@@ -8,6 +8,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.geom.Line2D;
 import java.util.Arrays;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 /** Swing component  */
@@ -27,8 +28,10 @@ public class JNaviChart extends JPanel {
 
         Dimension size = getSize();
         VectorImage img = plotter.toImage(series);
+        VectorImage.Style style = null;
 
         for(VectorImage.Shape s : img.getShapes()) {
+            style = updateStyle(g2, style, s.getStyle());
             if(s instanceof VectorImage.Line) {
                 VectorImage.Line line = (VectorImage.Line)s;
                 g2.draw(new Line2D.Float(
@@ -44,6 +47,26 @@ public class JNaviChart extends JPanel {
                         text.getY() * size.height);
             }
         }
+    }
+
+    private VectorImage.Style updateStyle(Graphics2D g, VectorImage.Style inherited, VectorImage.Style element) {
+        if(element == null || Objects.equals(inherited, element))
+            return inherited;
+
+        float strokeWidth = inherited != null ? inherited.getStrokeWidth() : 1;
+        if(strokeWidth != element.getStrokeWidth()) {
+            strokeWidth = element.getStrokeWidth();
+            g.setStroke(new BasicStroke(strokeWidth));
+
+        }
+
+        int strokeColor = inherited != null ? inherited.getStrokeColor() : Color.black.getRGB();
+        if(strokeColor != element.getStrokeColor()) {
+            strokeColor = element.getStrokeColor();
+            g.setColor(new Color(strokeColor));
+        }
+
+        return new VectorImage.Style(strokeWidth, strokeColor);
     }
 
 

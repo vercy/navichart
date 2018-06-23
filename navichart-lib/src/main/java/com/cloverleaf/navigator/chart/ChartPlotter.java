@@ -1,5 +1,6 @@
 package com.cloverleaf.navigator.chart;
 
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -9,6 +10,7 @@ public class ChartPlotter {
         DataPointBounds bounds = findMinMax(data);
         float dataHeight = (bounds.max - bounds.min) * 1.2f;
         float vStep = 1.0f / (data.length - 1);
+        VectorImage.Style sparkLine = new VectorImage.Style(0.75f, Color.RED.getRGB());
 
         List<VectorImage.Shape> img = new ArrayList<>();
         for(int i = 1; i < data.length; i++) {
@@ -19,7 +21,7 @@ public class ChartPlotter {
             float x2 = vStep * i;
             float y2 = 1 - ((data[i].getValue() - bounds.min + dataHeight / 12) / dataHeight);
 
-            img.add(new VectorImage.Line(x1, y1, x2, y2));
+            img.add(new VectorImage.Line(x1, y1, x2, y2, sparkLine));
 //            img.add(new VectorImage.Text(x1, y1, data[i-1].toString()));
         }
 
