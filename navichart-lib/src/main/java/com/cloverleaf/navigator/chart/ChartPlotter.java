@@ -7,12 +7,28 @@ import java.util.List;
 public class ChartPlotter {
 
     public VectorImage toImage(DataPoint[] data) {
-        DataPointBounds bounds = findMinMax(data);
+        DataValueBounds bounds = findMinMax(data);
         float dataHeight = (bounds.max - bounds.min) * 1.2f;
-        float vStep = 1.0f / (data.length - 1);
-        VectorImage.Style sparkLine = new VectorImage.Style(0.75f, Color.RED.getRGB());
 
+        DataPoint[] vRulerTicks = getVerticalTicks(bounds);
+
+        // 5% for the right ruler
+        VectorImage.Style rulerTick = new VectorImage.Style(0.5f, Color.black.getRGB());
         List<VectorImage.Shape> img = new ArrayList<>();
+        for(DataPoint tick : vRulerTicks) {
+            // transform
+
+            float x1 = 0.95f;
+            float y1 = 1 - ((tick.getValue() - bounds.min + dataHeight / 12) / dataHeight);
+            float x2 = 0.96f;
+
+            img.add(new VectorImage.Line(x1, y1, x2, y1, rulerTick));
+            img.add(new VectorImage.Text(x2 + 0.005f, y1, tick.getLabel()));
+        }
+
+        // 95%
+        float vStep = 1.0f / (data.length - 1) * 0.95f;
+        VectorImage.Style sparkLine = new VectorImage.Style(0.75f, Color.blue.getRGB());
         for(int i = 1; i < data.length; i++) {
             // transform
 
@@ -28,16 +44,27 @@ public class ChartPlotter {
         return new VectorImage(img.toArray(new VectorImage.Shape[0]));
     }
 
-    static final class DataPointBounds {
+    private DataPoint[] getVerticalTicks(DataValueBounds bounds) {
+        float dataHeight = (bounds.max - bounds.min) * 1.2f;
+        DataPoint[] ticks = new DataPoint[5];
+        for(int i = 0; i < ticks.length; i++) {
+            float value = bounds.min + i * (dataHeight / ticks.length);
+            ticks[i] = new DataPoint (String.format("%.2f",value), value);
+        }
+
+        return ticks;
+    }
+
+    static final class DataValueBounds {
         final float min, max;
 
-        DataPointBounds(float min, float max) {
+        DataValueBounds(float min, float max) {
             this.min = min;
             this.max = max;
         }
     }
 
-    private DataPointBounds findMinMax(DataPoint[] s) {
+    private DataValueBounds findMinMax(DataPoint[] s) {
         float min = Float.MAX_VALUE, max = Float.MIN_VALUE;
         for(DataPoint d : s) {
             if(d == null || d.isEmpty())
@@ -49,6 +76,6 @@ public class ChartPlotter {
                 max = d.getValue();
         }
 
-        return new DataPointBounds(min, max);
+        return new DataValueBounds(min, max);
     }
 }
