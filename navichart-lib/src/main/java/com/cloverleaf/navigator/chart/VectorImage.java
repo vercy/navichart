@@ -4,14 +4,28 @@ import java.util.Objects;
 
 public class VectorImage {
 
+    static final VectorImage EMPTY = new VectorImage(0, 0, new Shape[0]);
+
+    private final int width;
+    private final int height;
     private final Shape[] shapes;
 
-    VectorImage(Shape[] shapes) {
+    public VectorImage(int width, int height, Shape[] shapes) {
+        this.width = width;
+        this.height = height;
         this.shapes = shapes;
     }
 
     public Shape[] getShapes() {
         return shapes;
+    }
+
+    public int getWidth() {
+        return width;
+    }
+
+    public int getHeight() {
+        return height;
     }
 
     /** Common super interface for vector shapes */

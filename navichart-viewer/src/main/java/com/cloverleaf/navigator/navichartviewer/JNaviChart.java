@@ -1,11 +1,13 @@
 package com.cloverleaf.navigator.navichartviewer;
 
-import com.cloverleaf.navigator.chart.ChartPlotter;
 import com.cloverleaf.navigator.chart.DataPoint;
+import com.cloverleaf.navigator.chart.NaviChart;
 import com.cloverleaf.navigator.chart.VectorImage;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ComponentEvent;
+import java.awt.event.ComponentListener;
 import java.awt.geom.Line2D;
 import java.util.Arrays;
 import java.util.Objects;
@@ -19,15 +21,19 @@ public class JNaviChart extends JPanel {
             .collect(Collectors.toList())
             .toArray(new DataPoint[0]);
 
-    private ChartPlotter plotter = new ChartPlotter();
+    private NaviChart naviChart = new NaviChart();
+
+    public JNaviChart() {
+        naviChart.setData(series);
+        this.addComponentListener(new CListener());
+    }
 
     @Override
     protected void paintComponent(Graphics g) {
         Graphics2D g2 = (Graphics2D) g;
         g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
-        Dimension size = getSize();
-        VectorImage img = plotter.toImage(series);
+        VectorImage img = naviChart.getChartImage();
         VectorImage.Style style = null;
 
         for(VectorImage.Shape s : img.getShapes()) {
@@ -35,16 +41,16 @@ public class JNaviChart extends JPanel {
             if(s instanceof VectorImage.Line) {
                 VectorImage.Line line = (VectorImage.Line)s;
                 g2.draw(new Line2D.Float(
-                        line.getX1() * size.width,
-                        line.getY1() * size.height,
-                        line.getX2() * size.width,
-                        line.getY2() * size.height));
+                        line.getX1(),
+                        line.getY1(),
+                        line.getX2(),
+                        line.getY2()));
             } else if(s instanceof VectorImage.Text) {
                 VectorImage.Text text = (VectorImage.Text)s;
                 g2.drawString(
                         text.getText(),
-                        text.getX() * size.width,
-                        text.getY() * size.height);
+                        text.getX(),
+                        text.getY());
             }
         }
     }
@@ -69,5 +75,27 @@ public class JNaviChart extends JPanel {
         return new VectorImage.Style(strokeWidth, strokeColor);
     }
 
+    class CListener implements ComponentListener {
+        @Override
+        public void componentResized(ComponentEvent e) {
+            JComponent source = (JComponent)e.getSource();
+            naviChart.setViewPortSize(source.getWidth(), source.getHeight());
+        }
 
+        @Override
+        public void componentMoved(ComponentEvent e) {
+
+        }
+
+        @Override
+        public void componentShown(ComponentEvent e) {
+            JComponent source = (JComponent)e.getSource();
+            naviChart.setViewPortSize(source.getWidth(), source.getHeight());
+        }
+
+        @Override
+        public void componentHidden(ComponentEvent e) {
+
+        }
+    }
 }

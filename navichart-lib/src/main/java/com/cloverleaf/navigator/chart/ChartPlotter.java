@@ -6,6 +6,21 @@ import java.util.List;
 
 public class ChartPlotter {
 
+    private int width;
+    private int height;
+
+    /** Sets the view port size and returns true if the operation was an update */
+    public boolean setViewPortSize(int width, int height) {
+        boolean update = this.width != width || this.height != height;
+        this.width = width;
+        this.height = height;
+        return update;
+    }
+
+    public boolean isEmptyViewPort() {
+        return width <=0 || height <= 0;
+    }
+
     public VectorImage toImage(DataPoint[] data) {
         DataValueBounds bounds = findMinMax(data);
         float dataHeight = (bounds.max - bounds.min) * 1.2f;
@@ -22,8 +37,8 @@ public class ChartPlotter {
             float y1 = 1 - ((tick.getValue() - bounds.min + dataHeight / 12) / dataHeight);
             float x2 = 0.96f;
 
-            img.add(new VectorImage.Line(x1, y1, x2, y1, rulerTick));
-            img.add(new VectorImage.Text(x2 + 0.005f, y1, tick.getLabel()));
+            img.add(new VectorImage.Line(x1 * width, y1 * height, x2 * width, y1 * height, rulerTick));
+            img.add(new VectorImage.Text((x2 + 0.005f) * width, y1 * height, tick.getLabel()));
         }
 
         // 95%
@@ -37,15 +52,17 @@ public class ChartPlotter {
             float x2 = vStep * i;
             float y2 = 1 - ((data[i].getValue() - bounds.min + dataHeight / 12) / dataHeight);
 
-            img.add(new VectorImage.Line(x1, y1, x2, y2, sparkLine));
+            img.add(new VectorImage.Line(x1 * width, y1 * height, x2 * width, y2 * height, sparkLine));
 //            img.add(new VectorImage.Text(x1, y1, data[i-1].toString()));
         }
 
-        return new VectorImage(img.toArray(new VectorImage.Shape[0]));
+        return new VectorImage(width, height, img.toArray(new VectorImage.Shape[0]));
     }
 
     private DataPoint[] getVerticalTicks(DataValueBounds bounds) {
         float dataHeight = (bounds.max - bounds.min) * 1.2f;
+//        System.out.println(Math.log10(1) + " - " + Math.log10(5) + " - " + Math.log10(10) + " - " + Math.log10(50));
+//        System.out.println(Math.log10(bounds.max) - Math.log10(bounds.min));
         DataPoint[] ticks = new DataPoint[5];
         for(int i = 0; i < ticks.length; i++) {
             float value = bounds.min + i * (dataHeight / ticks.length);

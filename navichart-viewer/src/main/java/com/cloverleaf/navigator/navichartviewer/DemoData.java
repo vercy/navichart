@@ -1,7 +1,5 @@
 package com.cloverleaf.navigator.navichartviewer;
 
-import com.cloverleaf.navigator.chart.DataPoint;
-
 import java.time.LocalDate;
 
 class DemoData {
