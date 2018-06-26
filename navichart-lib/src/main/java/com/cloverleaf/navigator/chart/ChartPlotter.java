@@ -25,20 +25,21 @@ public class ChartPlotter {
         DataValueBounds bounds = findMinMax(data);
         float dataHeight = (bounds.max - bounds.min) * 1.2f;
 
-        DataPoint[] vRulerTicks = getVerticalTicks(bounds);
+        BasicRuler ruler = new BasicRuler();
+        DataPoint[] vRulerTicks = ruler.getVerticalTicks(bounds.min, bounds.max);
 
         // 5% for the right ruler
-        VectorImage.Style rulerTick = new VectorImage.Style(0.5f, Color.black.getRGB());
+        VectorImage.Style rulerTick = new VectorImage.Style(1.5f, Color.black.getRGB());
         List<VectorImage.Shape> img = new ArrayList<>();
         for(DataPoint tick : vRulerTicks) {
             // transform
 
-            float x1 = 0.95f;
-            float y1 = 1 - ((tick.getValue() - bounds.min + dataHeight / 12) / dataHeight);
-            float x2 = 0.96f;
+            float x1 = 0.95f * width;
+            float y1 = (1 - ((tick.getValue() - bounds.min + dataHeight / 12) / dataHeight)) * height - rulerTick.getStrokeWidth() / 2;
+            float x2 = 0.96f * width;
 
-            img.add(new VectorImage.Line(x1 * width, y1 * height, x2 * width, y1 * height, rulerTick));
-            img.add(new VectorImage.Text((x2 + 0.005f) * width, y1 * height, tick.getLabel()));
+            img.add(new VectorImage.Line(x1, y1, x2, y1, rulerTick));
+            img.add(new VectorImage.Text(x2 + 10, y1 + 3.5f, tick.getLabel()));
         }
 
         // 95%
@@ -53,24 +54,11 @@ public class ChartPlotter {
             float y2 = 1 - ((data[i].getValue() - bounds.min + dataHeight / 12) / dataHeight);
 
             img.add(new VectorImage.Line(x1 * width, y1 * height, x2 * width, y2 * height, sparkLine));
-//            img.add(new VectorImage.Text(x1, y1, data[i-1].toString()));
         }
 
         return new VectorImage(width, height, img.toArray(new VectorImage.Shape[0]));
     }
 
-    private DataPoint[] getVerticalTicks(DataValueBounds bounds) {
-        float dataHeight = (bounds.max - bounds.min) * 1.2f;
-//        System.out.println(Math.log10(1) + " - " + Math.log10(5) + " - " + Math.log10(10) + " - " + Math.log10(50));
-//        System.out.println(Math.log10(bounds.max) - Math.log10(bounds.min));
-        DataPoint[] ticks = new DataPoint[5];
-        for(int i = 0; i < ticks.length; i++) {
-            float value = bounds.min + i * (dataHeight / ticks.length);
-            ticks[i] = new DataPoint (String.format("%.2f",value), value);
-        }
-
-        return ticks;
-    }
 
     static final class DataValueBounds {
         final float min, max;
