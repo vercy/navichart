@@ -29,8 +29,10 @@ public class ChartPlotter {
         DataPoint[] vRulerTicks = ruler.getVerticalTicks(bounds.min, bounds.max);
 
         // 5% for the right ruler
-        VectorImage.Style rulerTick = new VectorImage.Style(1.5f, Color.black.getRGB());
+        VectorImage.Style rulerTick = new VectorImage.Style(0.5f, Color.black.getRGB());
+        VectorImage.Style rulerGuide = new VectorImage.Style(0.1f, Color.black.getRGB());
         List<VectorImage.Shape> img = new ArrayList<>();
+        img.add(new VectorImage.Line(0.95f * width, 0, 0.95f * width, height, rulerTick));
         for(DataPoint tick : vRulerTicks) {
             // transform
 
@@ -39,12 +41,13 @@ public class ChartPlotter {
             float x2 = 0.96f * width;
 
             img.add(new VectorImage.Line(x1, y1, x2, y1, rulerTick));
+            img.add(new VectorImage.Line(0, y1, x2, y1, rulerGuide));
             img.add(new VectorImage.Text(x2 + 10, y1 + 3.5f, tick.getLabel()));
         }
 
         // 95%
         float vStep = 1.0f / (data.length - 1) * 0.95f;
-        VectorImage.Style sparkLine = new VectorImage.Style(0.75f, Color.blue.getRGB());
+        VectorImage.Style sparkLine = new VectorImage.Style(2f, Color.black.getRGB());
         for(int i = 1; i < data.length; i++) {
             // transform
 
