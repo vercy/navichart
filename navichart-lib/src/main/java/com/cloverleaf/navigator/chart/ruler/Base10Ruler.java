@@ -1,9 +1,11 @@
-package com.cloverleaf.navigator.chart;
+package com.cloverleaf.navigator.chart.ruler;
 
-public class BasicRuler {
+import com.cloverleaf.navigator.chart.DataPoint;
+
+public class Base10Ruler {
 
     /** Generate equidistant ticks for the passed data interval */
-    DataPoint[] getVerticalTicks(float min, float max) {
+    public DataPoint[] getVerticalTicks(float min, float max) {
         float dataHeight = (max - min) * 1.2f;
         float tickUnit = getTickUnit(dataHeight);
         float firstTick = (float)Math.ceil(min / tickUnit) * tickUnit;
@@ -32,7 +34,7 @@ public class BasicRuler {
     }
 
     /** Format ruler tick text based on tick unit size */
-    String formatTickText(float value, float unit) {
+    private String formatTickText(float value, float unit) {
         if(unit >= 1f)
             return String.format("%.0f", value);
         else if(unit >= 0.1f)

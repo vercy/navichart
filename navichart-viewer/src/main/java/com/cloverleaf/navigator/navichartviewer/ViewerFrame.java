@@ -13,7 +13,7 @@ class ViewerFrame extends JFrame {
         getContentPane().setLayout(new GridBagLayout());
         GridBagConstraints c = new GridBagConstraints();
         c.fill = GridBagConstraints.BOTH;
-        
+
         c.weightx = ONE_SIXTH;
         c.weighty = ONE_SIXTH;
         c.gridx = 0;
