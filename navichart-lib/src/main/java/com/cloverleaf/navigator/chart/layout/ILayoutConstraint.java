@@ -9,26 +9,11 @@ public interface ILayoutConstraint {
         }
     }
 
-    class Reference implements ILayoutConstraint {
-        private final int gridX;
-        private final int gridY;
-
-        public Reference(int gridX, int gridY) {
-            this.gridX = gridX;
-            this.gridY = gridY;
-        }
-
-        public int getGridX() {
-            return gridX;
-        }
-
-        public int getGridY() {
-            return gridY;
-        }
+    class Inherit implements ILayoutConstraint {
 
         @Override
         public String toString() {
-            return "REFERENCE(" + gridX + ", " + gridY + ')';
+            return "INHERIT";
         }
     }
 

@@ -24,7 +24,7 @@ public class ChartPlotter {
     }
 
     public VectorImage toImage(DataPoint[] data) {
-        DataValueBounds bounds = findMinMax(data);
+        Algorithms.FloatRange bounds = Algorithms.findMinMax(data, DataPoint::getValue);
         float dataHeight = (bounds.max - bounds.min) * 1.2f;
 
         Base10Ruler ruler = new Base10Ruler();
@@ -81,27 +81,4 @@ public class ChartPlotter {
     }
 
 
-    static final class DataValueBounds {
-        final float min, max;
-
-        DataValueBounds(float min, float max) {
-            this.min = min;
-            this.max = max;
-        }
-    }
-
-    private DataValueBounds findMinMax(DataPoint[] s) {
-        float min = Float.MAX_VALUE, max = Float.MIN_VALUE;
-        for(DataPoint d : s) {
-            if(d == null || d.isEmpty())
-                continue;
-
-            if(min > d.getValue())
-                min = d.getValue();
-            if(max < d.getValue())
-                max = d.getValue();
-        }
-
-        return new DataValueBounds(min, max);
-    }
 }

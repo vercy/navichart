@@ -1,18 +1,17 @@
 package com.cloverleaf.navigator.chart.layout;
 
 import java.util.Arrays;
-import java.util.LinkedHashSet;
+import java.util.LinkedHashMap;
+import java.util.Map;
 import java.util.Objects;
-import java.util.Set;
-import java.util.function.ToIntFunction;
 
 public class LayoutGrid implements ILayout {
 
     private final int gridWidth;
     private final int gridHeight;
-    private final LayoutGridPoint[] gridPoints;
+    private final GridPoint[] gridPoints;
 
-    private LayoutGrid(int gWidth, int gHeight, LayoutGridPoint[] gridPoints) {
+    private LayoutGrid(int gWidth, int gHeight, GridPoint[] gridPoints) {
         this.gridWidth = gWidth;
         this.gridHeight = gHeight;
         this.gridPoints = gridPoints;
@@ -28,24 +27,18 @@ public class LayoutGrid implements ILayout {
         return "LayoutGrid{(" + gridWidth + " x " + gridHeight + "), gridPoints=" + Arrays.toString(gridPoints) + '}';
     }
 
-    static class LayoutGridPoint {
-        final ILayoutElement element;
+    static class GridPoint {
         final int gx;
         final int gy;
-        final ILayoutConstraint cx;
-        final ILayoutConstraint cy;
 
-        LayoutGridPoint(ILayoutElement element, int gx, int gy, ILayoutConstraint cx, ILayoutConstraint cy) {
-            this.element = element;
+        public GridPoint(int gx, int gy) {
             this.gx = gx;
             this.gy = gy;
-            this.cx = cx;
-            this.cy = cy;
         }
 
         @Override
         public String toString() {
-            return "LayoutGridPoint{(" + gx + ", " + gy + ") => (" + cx + ", " + cy + ")}";
+            return "(" + gx + ", " + gy + ")";
         }
 
         @Override
@@ -54,7 +47,7 @@ public class LayoutGrid implements ILayout {
                 return true;
             if (o == null || getClass() != o.getClass())
                 return false;
-            LayoutGridPoint that = (LayoutGridPoint) o;
+            GridPoint that = (GridPoint) o;
             return gx == that.gx && gy == that.gy;
         }
 
@@ -64,8 +57,25 @@ public class LayoutGrid implements ILayout {
         }
     }
 
+    static class GridElement {
+        final ILayoutElement element;
+        final ILayoutConstraint cx;
+        final ILayoutConstraint cy;
+
+        public GridElement(ILayoutElement element, ILayoutConstraint cx, ILayoutConstraint cy) {
+            this.element = element;
+            this.cx = cx;
+            this.cy = cy;
+        }
+
+        @Override
+        public String toString() {
+            return "(" + cx + ", " + cy + ")}";
+        }
+    }
+
     public static class Builder {
-        final Set<LayoutGridPoint> gridPoints = new LinkedHashSet<>();
+        final Map<GridPoint, GridElement> gridPoints = new LinkedHashMap<>();
 
         public Builder add(ILayoutElement e, int gx, int gy, ILayoutConstraint cx, ILayoutConstraint cy) {
             Objects.requireNonNull(e, "LayoutElement cannot be null");
@@ -77,29 +87,16 @@ public class LayoutGrid implements ILayout {
             if(gy < 0)
                 throw new IllegalArgumentException("Y grid coordinate must be >0. value: " + gy);
 
-            gridPoints.add(new LayoutGridPoint(e, gx, gy, cx, cy));
+            gridPoints.put(new GridPoint(gx, gy), new GridElement(e, cx, cy));
 
             return this;
         }
 
         public LayoutGrid build() {
-            int gWidth = findMax(gridPoints, p -> p.gx) + 1;
-            int gHeight = findMax(gridPoints, p -> p.gy) + 1;
-            LayoutGridPoint[] gridPointsArray = gridPoints.toArray(new LayoutGridPoint[0]);
 
             // TODO
 
-            return new LayoutGrid(gWidth, gHeight, gridPointsArray);
-        }
-
-        int findMax(Iterable<LayoutGridPoint> pts, ToIntFunction<LayoutGridPoint> metric) {
-            int max = Integer.MIN_VALUE;
-            for(LayoutGridPoint p : pts) {
-                int current = metric.applyAsInt(p);
-                if (current > max)
-                    max = current;
-            }
-            return max;
+            return null;
         }
     }
 }
