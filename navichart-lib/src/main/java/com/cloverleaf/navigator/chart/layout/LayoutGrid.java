@@ -23,11 +23,26 @@ public class LayoutGrid implements ILayout {
     }
 
     @Override
-    public void layout(int with, int height) {
-        // TODO
+    public void layout(int width, int height) {
+        float[] vertical = doLayout(width, rows);
+        float[] horizontal = doLayout(height, columns);
+
+        elements.forEach((idx, e) -> {
+            if(e == null)
+                return;
+
+            int rawIndex = idx;
+            e.setSize(
+                    horizontal[GridPoint.getX(rawIndex)],
+                    vertical[GridPoint.getY(rawIndex)]);
+        });
+    }
+
+    float[] doLayout(float total, ILayoutConstraint[] constraint) {
+        int l = constraint != null ? constraint.length : 0;
         // 1) evaluate measureables, subtract from width / height
         // 2) collect weights and distribute
-        // 3) update layout elements
+        return new float[l];
     }
 
     @Override

@@ -9,6 +9,19 @@ public interface ILayoutConstraint {
         }
     }
 
+    class Space implements ILayoutConstraint {
+        private final float amount;
+
+        public Space(float amount) {
+            this.amount = amount;
+        }
+
+        @Override
+        public String toString() {
+            return "SPACE(" + amount + '}';
+        }
+    }
+
     class Weight implements ILayoutConstraint {
         private final float weight;
 
