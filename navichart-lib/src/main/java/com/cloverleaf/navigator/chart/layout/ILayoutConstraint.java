@@ -9,14 +9,6 @@ public interface ILayoutConstraint {
         }
     }
 
-    class Inherit implements ILayoutConstraint {
-
-        @Override
-        public String toString() {
-            return "INHERIT";
-        }
-    }
-
     class Weight implements ILayoutConstraint {
         private final float weight;
 
