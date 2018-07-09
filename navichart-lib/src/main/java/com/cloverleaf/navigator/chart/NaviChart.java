@@ -13,10 +13,10 @@ public class NaviChart {
     private DataPoint[] data;
 
     public NaviChart() {
-        layout.setColumns(
+        layout.setColumnConstraints(
                 new ILayoutConstraint.Weight(1),
                 new ILayoutConstraint.Measure());
-        layout.setRows(
+        layout.setRowConstraints(
                 new ILayoutConstraint.Weight(1),
                 new ILayoutConstraint.Measure());
         layout.setElement(0,0, null);

@@ -16,6 +16,10 @@ public interface ILayoutConstraint {
             this.amount = amount;
         }
 
+        public float getAmount() {
+            return amount;
+        }
+
         @Override
         public String toString() {
             return "SPACE(" + amount + '}';
@@ -27,6 +31,10 @@ public interface ILayoutConstraint {
 
         public Weight(float weight) {
             this.weight = weight;
+        }
+
+        public float getWeight() {
+            return weight;
         }
 
         @Override
